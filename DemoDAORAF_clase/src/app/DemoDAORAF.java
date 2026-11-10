@@ -11,6 +11,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Random;
 
+// Comentario de prueba. Clase 2026/11/10
+
 /**
  * ACT13: fichero de acceso aleatorio con 25 productos (referencia int + precio double)
  * y ajuste de precios.
