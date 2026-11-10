@@ -70,7 +70,14 @@ public class ProductoDAOImplFicheros implements ProductoDAO {
      */
     @Override
     public boolean actualizar(Producto producto) throws DAOException {
-        return false;
+        try (RandomAccessFile raf = new RandomAccessFile(ruta.toString(), "rw")){
+            long numero = devuelveNumeroDeRegistro(raf, producto.getReferencia());
+            if (numero == -1) return false;
+            escribirEn(raf, numero,producto);
+            return true;
+        }catch (IOException ioe){
+            throw new DAOException("Error en actualizar producto" +producto.getReferencia(), ioe);
+        }
     }
 
     // MÉTODOS AUXILIARES
@@ -92,6 +99,17 @@ public class ProductoDAOImplFicheros implements ProductoDAO {
         raf.seek((numRegistro - 1) * TAM_REGISTRO);
         raf.writeInt(producto.getReferencia());
         raf.writeDouble(producto.getPrecio());
+    }
+
+    private long devuelveNumeroDeRegistro(RandomAccessFile raf, int referencia) throws IOException {
+        long totalRegistros = contar(raf);
+        for (long n = 1; n <= totalRegistros ; n++) {
+            raf.seek((n-1) * TAM_REGISTRO);
+            if (raf.readInt() == referencia){
+                return n;
+            }
+        }
+        return -1;
     }
 
 }
